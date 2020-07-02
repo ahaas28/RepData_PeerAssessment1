@@ -17,19 +17,8 @@ The histogram shows the total number of steps taken each day. For this part the 
 
 ```r
 ## read date
+unzip("./activity.zip")
 dat <- read.csv("activity.csv")
-```
-
-```
-## Warning in file(file, "rt"): kann Datei 'activity.csv' nicht öffnen:
-## No such file or directory
-```
-
-```
-## Error in file(file, "rt"): kann Verbindung nicht öffnen
-```
-
-```r
 data <- na.omit(dat)
 data$date <- as.Date(data$date)
 
