@@ -14,9 +14,22 @@ The variables included in the dataset are:
 
 The histogram shows the total number of steps taken each day. For this part the missing values in the dataset are ignored.
 
-```{r}
+
+```r
 ## read date
 dat <- read.csv("activity.csv")
+```
+
+```
+## Warning in file(file, "rt"): kann Datei 'activity.csv' nicht öffnen:
+## No such file or directory
+```
+
+```
+## Error in file(file, "rt"): kann Verbindung nicht öffnen
+```
+
+```r
 data <- na.omit(dat)
 data$date <- as.Date(data$date)
 
@@ -27,25 +40,29 @@ hist(result$`sum(steps)`, breaks = 20, xlim = c(0, 25000),
      main = "Number of steps per day", xlab = "steps")
 ```
 
+![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1-1.png)
+
 
 The mean and the median total number of steps taken per day were calculated.
 
-```{r}
+
+```r
 Mean <- mean(result$`sum(steps)`)
 Median <- median(result$`sum(steps)`)
 ```
 
 These are the results:  
 
-**mean** = `r Mean`   
-**median** = `r Median`  
+**mean** = 1.0766189 &times; 10<sup>4</sup>   
+**median** = 10765  
 
 
 
 ## What is the average daily activity pattern?
 
 
-```{r}
+
+```r
 library(dplyr)
 result2 <- group_by(data, interval) %>% summarise(mean(steps))
 m <- max(result2$`mean(steps)`)
@@ -58,22 +75,26 @@ abline(v = ma$interval, col = "red")
 legend("topright", lty = 1, col = "red", paste("maximum value at", ma$interval))
 ```
 
-A time series plot of the average number of steps taken during the day (averaged over all days) shows that the interval at `r ma$interval` contains the maximum number of steps taken durin the day.
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
+
+A time series plot of the average number of steps taken during the day (averaged over all days) shows that the interval at 835 contains the maximum number of steps taken durin the day.
 
 
 ### Imputing missing values
 
 In the dataset there are a number of days/intervals where there are missing values, which may introduce bias into some calculations or  summaries of the data.
 
-```{r}
+
+```r
 nr <- length(dat$steps) - length(data$steps)
 ```
 
-The number of missing values in the dataset is `r nr`.
+The number of missing values in the dataset is 2304.
 
 In order to fill in the missing values the average steps taken in a 5-minute interval during all days were used and a new dataset created.
 
-```{r}
+
+```r
 data2 <- dat
 for (i in seq(data2$steps)){
 if (is.na(data2$steps[i])) {
@@ -86,7 +107,8 @@ if (is.na(data2$steps[i])) {
 The histogram shows the result for the corrected data.
 
 
-```{r}
+
+```r
 ## histogram of data2
   
 result3 <- group_by(data2, date) %>% summarise(sum(steps))
@@ -96,7 +118,9 @@ hist(result3$`sum(steps)`, breaks = 20, xlim = c(0, 25000), ylim = c(0,20),
      main = "Number of steps per day", xlab = "steps")
 ```
 
-The **mean** of the total number of steps now is `r Mean2`, the **median** is `r Median2`.  
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png)
+
+The **mean** of the total number of steps now is 1.0766189 &times; 10<sup>4</sup>, the **median** is 1.0766189 &times; 10<sup>4</sup>.  
 
 Mean and median are now identical. The bar with the highest frequency ( ~ 10000-11000) increased.
 
@@ -105,7 +129,8 @@ Mean and median are now identical. The bar with the highest frequency ( ~ 10000-
 
 In the last step the activity patterns between weekdays and weekends were compared. 
 
-```{r}
+
+```r
 data2$date <- as.Date(data2$date)
 weekd <- c("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag")
 data3 <- mutate(data2, weekday = weekdays(data2$date), w = ifelse(weekday %in% weekd, "weekday", "weekend"))
@@ -115,3 +140,5 @@ data5 <- rbind(data_wd, data_we)
 library(lattice)
 xyplot(`mean(steps)` ~ interval | `first(w)`, data = data5, type = "l", layout = c(1,2), ylab = "Number of steps", xlab = "Interval")
 ```
+
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png)
